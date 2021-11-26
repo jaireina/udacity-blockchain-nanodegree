@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Deploy a Remix Contract</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css" />
+
+    <script src="https://unpkg.com/@metamask/detect-provider/dist/detect-provider.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  </head>
+
+  <body>
+    <div>
+      <h1>Ethereum Secret Messenger</h1>
+      <hr />
+
+      <div id="msg">Hola</div>
+      <label for="message"
+        >This site writes a secret message to the Ethereum blockchain!</label
+      >
+      <input id="userInput" type="text" />
+
+      <button id="setMessageButton">Set secret message</button>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+
+    <script>
+      // Connect a the web3 provider
+      // web3 = new Web3(web3.currentProvider);
+      // if (typeof web3 !== "undefined") {
+      // } else {
+      // web3 = new Web3(
+      //   new Web3.providers.HttpProvider(
+      //     "https://ropsten.infura.io/v3/5415e10f8c344be4b081ed970c3a835b"
+      //   )
+      // );
+      // }
+
+      function setMsg(msg) {
+        const msgDom = document.getElementById("msg");
+        msgDom.innerText = msg;
+        msgDom.style.display = "block";
+      }
+
+      function initApp(provider) {}
+
+      (async () => {
+        const provider = detectEthereumProvider();
+        if (provider) {
+          initApp(provider);
+        } else {
+          setMsg("Please install MetaMask");
+        }
+        const web3 = new Web3(window.ethereum);
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        });
+
+        // Get the Contract address
+        var RemixContract = new web3.eth.Contract(
+          // ABI
+          [
+            {
+              constant: false,
+              inputs: [
+                {
+                  name: "x",
+                  type: "string",
+                },
+              ],
+              name: "setMessage",
+              outputs: [],
+              payable: false,
+              stateMutability: "nonpayable",
+              type: "function",
+            },
+            {
+              constant: true,
+              inputs: [],
+              name: "getMessage",
+              outputs: [
+                {
+                  name: "",
+                  type: "string",
+                },
+              ],
+              payable: false,
+              stateMutability: "view",
+              type: "function",
+            },
+          ],
+          // contract address
+          "0x41D8a53ff2A95dcD2a1cAdD639cF03FD5e21eF12"
+        );
+        console.log(RemixContract);
+
+        $("#setMessageButton").click(async function () {
+          const msg = $("#userInput").val();
+          try {
+            const response = await RemixContract.methods
+              .setMessage(msg)
+              .send({ from: accounts[0] });
+            console.log("response", response);
+            console.log(msg);
+          } catch (e) {
+            setMsg(e.message);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -3,13 +3,13 @@ const EthereumTransaction = require('ethereumjs-tx');
 const web3 = new Web3('http://127.0.0.1:7545');
 
 const sending = {
-  address: "0x76Ba2F248a31e34f6035F8e0889f4bFbE79a6C87",
-  key: Buffer.from("9a21b417331903d1fd04010503cc217453bd01e6d623fc0e22c1040606b512d8", 'hex'),
+  address: "0xF52c5CC8C01cec2Ebd1951B7520f634719313A2a",
+  key: Buffer.from("8baf1a151feda13031373cf1ea360da44e01a4ab6a47a1ae81c16ad0e86b56ae", 'hex'),
 }
 
 const receiving = {
-  address: "0x498540C4081e27f6c7cb9a68C9A6911Ee1dF8EEb",
-  key: Buffer.from("1536da263caefd5279655e0cc3aead97ba58da95cbe0e676865f76c5b27c6b47", 'hex')
+  address: "0x334af99d21a54E12a0f684B60398E531a3BC57db",
+  key: Buffer.from("6847926a226153a37be52f130341ce193d5779ff9fc1906571bae55389e7406d", 'hex')
 }
 
 async function printBalance(acc) {
@@ -29,7 +29,7 @@ async function printBalance(acc) {
     to: receiving.address,
     gasPrice: 20000000,
     gasLimit: 30000,
-    value: 100,
+    value: 1,
     data: ""
   };
 
@@ -39,7 +39,7 @@ async function printBalance(acc) {
 
   // // Send the serialized transaction
   const serializedTransaction = transaction.serialize();
-  await web3.eth.sendSignedTransaction(serializedTransaction);
+  console.log("result", await web3.eth.sendSignedTransaction(serializedTransaction));
 
   await printBalance(sending.address);
   await printBalance(receiving.address);
